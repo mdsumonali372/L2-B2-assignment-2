@@ -35,8 +35,18 @@ const getSingleUserFromDB = async (userId: string) => {
   }
 };
 
+const deleteUserFromDB = async (userId: string) => {
+  try {
+    const result = await User.deleteOne({ userId });
+    return result;
+  } catch (err) {
+    console.log('Error fetching single user:', err);
+  }
+};
+
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
   getSingleUserFromDB,
+  deleteUserFromDB,
 };
