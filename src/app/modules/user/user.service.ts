@@ -35,6 +35,18 @@ const getSingleUserFromDB = async (userId: string) => {
   }
 };
 
+const updateUserFromDB = async (userId: string, userData: any) => {
+  try {
+    const updatedUser = await User.findByIdAndUpdate(userId, userData, {
+      new: true,
+    });
+    return updatedUser;
+  } catch (err) {
+    console.log('Error updating user:', err);
+    throw err;
+  }
+};
+
 const deleteUserFromDB = async (userId: string) => {
   try {
     const result = await User.deleteOne({ userId });
@@ -49,4 +61,5 @@ export const UserServices = {
   getAllUsersFromDB,
   getSingleUserFromDB,
   deleteUserFromDB,
+  updateUserFromDB,
 };
