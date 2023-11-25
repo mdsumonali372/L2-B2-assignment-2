@@ -1,17 +1,25 @@
 import { Request, Response } from 'express';
 import { UserServices } from './user.service';
+import { userValidationSchema } from './user.validation';
 
 const createUser = async (req: Request, res: Response) => {
   try {
     const { user: userData } = req.body;
-    const result = await UserServices.createUserIntoDB(userData);
+
+    const zodValidationData = userValidationSchema.parse(userData);
+
+    const result = await UserServices.createUserIntoDB(zodValidationData);
     res.status(200).json({
       success: true,
       message: 'User created successfully!',
       data: result,
     });
-  } catch (err) {
-    console.log(err);
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'something went wrong',
+      data: err,
+    });
   }
 };
 
@@ -23,8 +31,12 @@ const getAllUser = async (req: Request, res: Response) => {
       message: 'Users fetched successfully!',
       data: result,
     });
-  } catch (err) {
-    console.log(err);
+  } catch (err: any) {
+    res.status(500).json({
+      success: false,
+      message: err.message || 'something went wrong',
+      data: err,
+    });
   }
 };
 
