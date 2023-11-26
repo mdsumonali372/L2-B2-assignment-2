@@ -1,4 +1,3 @@
-import mongoose from 'mongoose';
 import { TUser } from './user.interface';
 import { User } from './user.models';
 
@@ -15,13 +14,11 @@ import { User } from './user.models';
 const createUserIntoDB = async (user: TUser) => {
   try {
     const result = await User.create(user);
-
     const projection = { password: false };
     const createdUserWithoutPassword = await User.findOne(
       { _id: result._id },
       projection,
     );
-
     return createdUserWithoutPassword;
   } catch (error) {
     console.log('Error creating user:', error);
