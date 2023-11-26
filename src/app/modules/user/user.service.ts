@@ -1,13 +1,31 @@
+import mongoose from 'mongoose';
 import { TUser } from './user.interface';
 import { User } from './user.models';
+
+// const createUserIntoDB = async (user: TUser) => {
+//   try {
+//     const result = await User.create(user);
+//     return result;
+//   } catch (error) {
+//     console.log('Error creating user:', error);
+//     throw error;
+//   }
+// };
 
 const createUserIntoDB = async (user: TUser) => {
   try {
     const result = await User.create(user);
-    return result;
+
+    const projection = { password: false };
+    const createdUserWithoutPassword = await User.findOne(
+      { _id: result._id },
+      projection,
+    );
+
+    return createdUserWithoutPassword;
   } catch (error) {
     console.log('Error creating user:', error);
-    throw error; // Rethrow the error or handle it as needed
+    throw error;
   }
 };
 
@@ -15,6 +33,7 @@ const getAllUsersFromDB = async () => {
   const result = await User.aggregate([
     {
       $project: {
+        _id: false,
         userName: 1,
         fullName: 1,
         age: 1,
@@ -26,28 +45,23 @@ const getAllUsersFromDB = async () => {
   return result;
 };
 
-const getSingleUserFromDB = async (userId: string) => {
+const getSingleUserFromDB = async (userId: number) => {
   try {
-    const result = await User.findOne({ userId });
+    const result = await User.findOne(
+      { userId },
+      {
+        _id: false,
+        password: false,
+        orders: false,
+      },
+    );
     return result;
   } catch (error) {
     console.log('Error fetching single user:', error);
   }
 };
 
-const updateUserFromDB = async (userId: string, userData: any) => {
-  try {
-    const updatedUser = await User.findByIdAndUpdate(userId, userData, {
-      new: true,
-    });
-    return updatedUser;
-  } catch (err) {
-    console.log('Error updating user:', err);
-    throw err;
-  }
-};
-
-const deleteUserFromDB = async (userId: string) => {
+const deleteUserFromDB = async (userId: number) => {
   try {
     const result = await User.deleteOne({ userId });
     return result;
@@ -61,5 +75,4 @@ export const UserServices = {
   getAllUsersFromDB,
   getSingleUserFromDB,
   deleteUserFromDB,
-  updateUserFromDB,
 };

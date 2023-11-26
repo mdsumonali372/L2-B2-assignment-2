@@ -43,7 +43,7 @@ const getAllUser = async (req: Request, res: Response) => {
 const getSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const result = await UserServices.getSingleUserFromDB(userId);
+    const result = await UserServices.getSingleUserFromDB(Number(userId));
     res.status(200).json({
       success: true,
       message: 'User fetched successfully!',
@@ -58,32 +58,10 @@ const getSingleUser = async (req: Request, res: Response) => {
   }
 };
 
-const updateUser = async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.params;
-    const userDataToUpdate = req.body;
-    const result = await UserServices.updateUserFromDB(
-      userId,
-      userDataToUpdate,
-    );
-    res.status(200).json({
-      success: true,
-      message: 'User updated successfully!',
-      data: result,
-    });
-  } catch (err: any) {
-    res.status(500).json({
-      success: false,
-      message: 'Failed to update user.',
-      error: err.message, // Sending the error message as a response
-    });
-  }
-};
-
 const deleteUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    const result = await UserServices.deleteUserFromDB(userId);
+    const result = await UserServices.deleteUserFromDB(Number(userId));
     res.status(200).json({
       success: true,
       message: 'User deletd successfully!',
@@ -103,5 +81,4 @@ export const UserControllers = {
   getAllUser,
   getSingleUser,
   deleteUser,
-  updateUser,
 };
