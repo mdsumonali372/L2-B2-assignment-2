@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { UserServices } from './user.service';
 import { userValidationSchema } from './user.validation';
-import mongoose from 'mongoose';
 
 const createUser = async (req: Request, res: Response) => {
   try {
@@ -105,8 +104,15 @@ const addUserOrder = async (req: Request, res: Response) => {
       price,
       quantity,
     };
-    console.log(req.body);
+
     const result = await UserServices.addUserOrderFromDB(userId, newOrder);
+    if (!result) {
+      return res.status(404).json({
+        success: false,
+        message: 'User not found',
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: 'Order created successfully!',
@@ -115,8 +121,43 @@ const addUserOrder = async (req: Request, res: Response) => {
   } catch (err) {
     res.status(500).json({
       success: false,
-      message: 'User not found',
+      message: err.message || 'Internal Server Error',
     });
+  }
+};
+
+const getUserOrderData = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const orders = await UserServices.getUserOrderUserFromDB(Number(userId));
+    res.status(200).json({
+      success: true,
+      message: 'Order fetched successfully!',
+      data: orders,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch orders. Please try again later.',
+    });
+  }
+};
+
+const getCalculateTotaPriceOrders = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+    const result = await UserServices.getCalculateTotalPriceFromDB(
+      Number(userId),
+    );
+    console.log('result price', result);
+    res.status(200).json({
+      success: true,
+      message: 'Total price calculated successfully!',
+      data: result,
+    });
+  } catch (err) {
+    console.log(err);
   }
 };
 
@@ -127,4 +168,6 @@ export const UserControllers = {
   updateUser,
   deleteUser,
   addUserOrder,
+  getUserOrderData,
+  getCalculateTotaPriceOrders,
 };

@@ -1,16 +1,5 @@
-import mongoose from 'mongoose';
 import { TUser } from './user.interface';
 import { User } from './user.models';
-
-// const createUserIntoDB = async (user: TUser) => {
-//   try {
-//     const result = await User.create(user);
-//     return result;
-//   } catch (error) {
-//     console.log('Error creating user:', error);
-//     throw error;
-//   }
-// };
 
 const createUserIntoDB = async (user: TUser) => {
   try {
@@ -88,16 +77,78 @@ const deleteUserFromDB = async (userId: number) => {
 const addUserOrderFromDB = async (userId: number, orderData: any) => {
   try {
     const user = await User.findOne({ userId });
+
     if (!user) {
       throw new Error('User not found.');
     }
+
     if (!user.orders) {
       user.orders = [];
     }
+
     user.orders.push(orderData);
     await user.save();
-  } catch (error: any) {
-    throw error();
+
+    return user;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+};
+
+const getUserOrderUserFromDB = async (userId: number) => {
+  try {
+    const result = await User.findOne(
+      { userId },
+      { _id: 0, password: 0, __v: 0 },
+    ).select('orders');
+
+    if (!result) {
+      throw new Error('User not found.');
+    }
+
+    return result.orders;
+  } catch (error) {
+    console.log('Error fetching user orders:', error);
+    throw error;
+  }
+};
+
+const getCalculateTotalPriceFromDB = async (userId: number) => {
+  try {
+    const totalPricePipeline = [
+      { $match: { userId } },
+      { $unwind: '$orders' },
+      {
+        $group: {
+          _id: null,
+          totalPrice: {
+            $sum: { $multiply: ['$orders.price', '$orders.quantity'] },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          totalPrice: 1,
+        },
+      },
+    ];
+
+    const totalPriceResult = await User.aggregate(totalPricePipeline);
+
+    let totalPriceValue = 0;
+    if (totalPriceResult.length !== 0) {
+      totalPriceValue = totalPriceResult[0].totalPrice;
+    }
+    const convertFixed = totalPriceValue.toFixed(2);
+
+    return {
+      totalPrice: parseFloat(convertFixed),
+    };
+  } catch (error) {
+    console.log('Error calculating total price:', error);
+    throw error;
   }
 };
 
@@ -108,4 +159,6 @@ export const UserServices = {
   updateUserFromDb,
   deleteUserFromDB,
   addUserOrderFromDB,
+  getUserOrderUserFromDB,
+  getCalculateTotalPriceFromDB,
 };
