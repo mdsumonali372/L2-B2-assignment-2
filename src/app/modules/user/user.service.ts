@@ -1,3 +1,4 @@
+import mongoose from 'mongoose';
 import { TUser } from './user.interface';
 import { User } from './user.models';
 
@@ -47,7 +48,6 @@ const getSingleUserFromDB = async (userId: number) => {
     const result = await User.findOne(
       { userId },
       {
-        _id: false,
         password: false,
         orders: false,
       },
@@ -55,6 +55,24 @@ const getSingleUserFromDB = async (userId: number) => {
     return result;
   } catch (error) {
     console.log('Error fetching single user:', error);
+  }
+};
+
+const updateUserFromDb = async (
+  id: string,
+  updatedUserData: TUser,
+): Promise<TUser | null> => {
+  try {
+    console.log('service user id', id);
+    const updatedUser = await User.findByIdAndUpdate(id, updatedUserData, {
+      new: true,
+      projection: { password: false },
+      runValidators: true,
+    });
+    return updatedUser;
+  } catch (error) {
+    console.log('Error updating user:', error);
+    throw error;
   }
 };
 
@@ -67,9 +85,27 @@ const deleteUserFromDB = async (userId: number) => {
   }
 };
 
+const addUserOrderFromDB = async (userId: number, orderData: any) => {
+  try {
+    const user = await User.findOne({ userId });
+    if (!user) {
+      throw new Error('User not found.');
+    }
+    if (!user.orders) {
+      user.orders = [];
+    }
+    user.orders.push(orderData);
+    await user.save();
+  } catch (error: any) {
+    throw error();
+  }
+};
+
 export const UserServices = {
   createUserIntoDB,
   getAllUsersFromDB,
   getSingleUserFromDB,
+  updateUserFromDb,
   deleteUserFromDB,
+  addUserOrderFromDB,
 };
