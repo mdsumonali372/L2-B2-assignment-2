@@ -12,7 +12,7 @@ router.get(
   UserControllers.getCalculateTotaPriceOrders,
 );
 router.put('/:userId', UserControllers.updateUser);
-router.put('/:userId/orders', UserControllers.addUserOrder);
+router.put('/:userId/orders', UserControllers.addOrderToUser);
 router.delete('/:userId', UserControllers.deleteUser);
 
 export const UserRoutes = router;

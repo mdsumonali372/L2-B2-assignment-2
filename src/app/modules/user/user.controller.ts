@@ -61,13 +61,18 @@ const getSingleUser = async (req: Request, res: Response) => {
 const updateUser = async (req: Request, res: Response) => {
   try {
     const userData = req.body;
+    console.log('req body', req.body);
     const { userId } = req.params;
-    const result = await UserServices.updateUserFromDb(userId, userData);
+    const result = await UserServices.updateUserFromDb(
+      Number(userId),
+      userData,
+    );
     res.status(200).json({
       success: true,
       message: 'User update successfully!',
       data: result,
     });
+    console.log('result:', result);
   } catch (err) {
     console.log(err);
     res.status(500).json({
@@ -95,33 +100,38 @@ const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
-const addUserOrder = async (req: Request, res: Response) => {
-  try {
-    const userId = Number(req.params.userId);
-    const { productName, price, quantity } = req.body;
-    const newOrder = {
-      productName,
-      price,
-      quantity,
-    };
+const addOrderToUser = async (req: Request, res: Response) => {
+  const userId = parseInt(req.params.userId);
+  const orders = req.body.orders;
+  if (!orders || orders.length === 0) {
+    return res.status(400).json({
+      success: false,
+      message: 'Please provide at least one order.',
+    });
+  }
 
-    const result = await UserServices.addUserOrderFromDB(userId, newOrder);
-    if (!result) {
-      return res.status(404).json({
+  try {
+    const { productName, price, quantity } = orders[0];
+
+    if (!productName || !price || !quantity) {
+      return res.status(400).json({
         success: false,
-        message: 'User not found',
+        message:
+          'Please provide productName, price, and quantity for the order.',
       });
     }
 
+    const orderData = { productName, price, quantity };
+    const user = await UserServices.addUserOrderFromDB(userId, orderData);
     res.status(200).json({
       success: true,
       message: 'Order created successfully!',
-      data: result,
+      data: user.orders,
     });
-  } catch (err) {
+  } catch (error: any) {
     res.status(500).json({
       success: false,
-      message: err.message || 'Internal Server Error',
+      message: error.message,
     });
   }
 };
@@ -167,7 +177,7 @@ export const UserControllers = {
   getSingleUser,
   updateUser,
   deleteUser,
-  addUserOrder,
+  addOrderToUser,
   getUserOrderData,
   getCalculateTotaPriceOrders,
 };

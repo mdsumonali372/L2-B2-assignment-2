@@ -47,21 +47,19 @@ const getSingleUserFromDB = async (userId: number) => {
   }
 };
 
-const updateUserFromDb = async (
-  id: string,
-  updatedUserData: TUser,
-): Promise<TUser | null> => {
+const updateUserFromDb = async (userId: number, updatedUserData: TUser) => {
   try {
-    console.log('service user id', id);
-    const updatedUser = await User.findByIdAndUpdate(id, updatedUserData, {
+    const filter = { userId: userId };
+    console.log('userData:', updatedUserData);
+    const updatedUser = await User.findOneAndUpdate(filter, updatedUserData, {
       new: true,
       projection: { password: false },
       runValidators: true,
     });
+
     return updatedUser;
-  } catch (error) {
-    console.log('Error updating user:', error);
-    throw error;
+  } catch (err) {
+    console.log(err);
   }
 };
 
@@ -86,13 +84,19 @@ const addUserOrderFromDB = async (userId: number, orderData: any) => {
       user.orders = [];
     }
 
-    user.orders.push(orderData);
+    const newOrder = {
+      productName: orderData.productName,
+      price: orderData.price,
+      quantity: orderData.quantity,
+    };
+
+    user.orders.push(newOrder);
     await user.save();
 
     return user;
   } catch (error) {
-    console.log(error);
-    throw error;
+    console.error(error);
+    throw new Error('Failed to add order.');
   }
 };
 
