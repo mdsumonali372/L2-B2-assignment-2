@@ -1,6 +1,7 @@
 import { TUser } from './user.interface';
 import { User } from './user.models';
 
+// create user
 const createUserIntoDB = async (user: TUser) => {
   try {
     const result = await User.create(user);
@@ -15,7 +16,7 @@ const createUserIntoDB = async (user: TUser) => {
     throw error;
   }
 };
-
+// get all user
 const getAllUsersFromDB = async () => {
   const result = await User.aggregate([
     {
@@ -31,7 +32,7 @@ const getAllUsersFromDB = async () => {
   ]);
   return result;
 };
-
+// get sigle user
 const getSingleUserFromDB = async (userId: number) => {
   try {
     const result = await User.findOne(
@@ -46,7 +47,7 @@ const getSingleUserFromDB = async (userId: number) => {
     console.log('Error fetching single user:', error);
   }
 };
-
+// update user
 const updateUserFromDb = async (userId: number, updatedUserData: TUser) => {
   try {
     const filter = { userId: userId };
@@ -62,7 +63,7 @@ const updateUserFromDb = async (userId: number, updatedUserData: TUser) => {
     console.log(err);
   }
 };
-
+// delete user
 const deleteUserFromDB = async (userId: number) => {
   try {
     const result = await User.deleteOne({ userId });
@@ -71,7 +72,7 @@ const deleteUserFromDB = async (userId: number) => {
     console.log('Error fetching single user:', err);
   }
 };
-
+// add user order
 const addUserOrderFromDB = async (userId: number, orderData: any) => {
   try {
     const user = await User.findOne({ userId });
@@ -99,7 +100,7 @@ const addUserOrderFromDB = async (userId: number, orderData: any) => {
     throw new Error('Failed to add order.');
   }
 };
-
+// get user order
 const getUserOrderUserFromDB = async (userId: number) => {
   try {
     const result = await User.findOne(
@@ -117,7 +118,7 @@ const getUserOrderUserFromDB = async (userId: number) => {
     throw error;
   }
 };
-
+// calculate order
 const getCalculateTotalPriceFromDB = async (userId: number) => {
   try {
     const totalPricePipeline = [

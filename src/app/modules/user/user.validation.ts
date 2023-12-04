@@ -15,7 +15,7 @@ const orderValidationSchema = z.object({
 // Define an object schema for the user
 export const userValidationSchema = z.object({
   userId: z.number().int().positive(),
-  userName: z.string().nonempty(),
+  username: z.string().nonempty(),
   password: z.string().nonempty(),
   fullName: z.object({
     firstName: z.string().nonempty(),
