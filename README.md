@@ -1,7 +1,5 @@
 # L2-B2 ASSIGNMENT-2
 
-A brief description of your project.
-
 ## Getting Started
 
 To get started with this project, follow these steps:
