@@ -50,7 +50,7 @@ const getSingleUser = async (req: Request, res: Response) => {
       message: 'User fetched successfully!',
       data: result,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     res.status(500).json({
       success: false,
@@ -74,7 +74,7 @@ const updateUser = async (req: Request, res: Response) => {
       data: result,
     });
     console.log('result:', result);
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     res.status(500).json({
       success: false,
@@ -92,7 +92,7 @@ const deleteUser = async (req: Request, res: Response) => {
       message: 'User deletd successfully!',
       data: result,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     res.status(500).json({
       success: false,
