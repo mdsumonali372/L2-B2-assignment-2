@@ -167,12 +167,20 @@ const getCalculateTotaPriceOrders = async (req: Request, res: Response) => {
       message: 'Total price calculated successfully!',
       data: result,
     });
-  } catch (err: any) {
-    console.log(err);
-    res.status(500).json({
-      success: false,
-      message: 'Failed to fetch orders. Please try again later.',
-    });
+  } catch (err) {
+    if (err instanceof Error) {
+      console.log(err);
+      res.status(500).json({
+        success: false,
+        message: 'Failed to fetch orders. Please try again later.',
+      });
+    } else {
+      console.log('Non-error type caught:', err);
+      res.status(500).json({
+        success: false,
+        message: 'An unexpected error occurred.',
+      });
+    }
   }
 };
 
