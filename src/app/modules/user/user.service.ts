@@ -98,7 +98,7 @@ const addUserOrderFromDB = async (userId: number, orderData: any) => {
     return user;
   } catch (error) {
     console.error(error);
-    throw new Error('Failed to add order.');
+    throw new Error('User Not Found');
   }
 };
 // get user order from DB

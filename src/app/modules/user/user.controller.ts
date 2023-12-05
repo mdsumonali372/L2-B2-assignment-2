@@ -161,7 +161,6 @@ const getCalculateTotaPriceOrders = async (req: Request, res: Response) => {
     const result = await UserServices.getCalculateTotalPriceFromDB(
       Number(userId),
     );
-    console.log('result price', result);
     res.status(200).json({
       success: true,
       message: 'Total price calculated successfully!',
