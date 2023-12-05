@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { UserServices } from './user.service';
 import { userValidationSchema } from './user.validation';
 
+// create user from controller
 const createUser = async (req: Request, res: Response) => {
   try {
     const { user: userData } = req.body;
@@ -22,7 +23,7 @@ const createUser = async (req: Request, res: Response) => {
     });
   }
 };
-
+// get all user form controller
 const getAllUser = async (req: Request, res: Response) => {
   try {
     const result = await UserServices.getAllUsersFromDB();
@@ -39,7 +40,7 @@ const getAllUser = async (req: Request, res: Response) => {
     });
   }
 };
-
+// get single user from controller
 const getSingleUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -57,7 +58,7 @@ const getSingleUser = async (req: Request, res: Response) => {
     });
   }
 };
-
+// update user from controller
 const updateUser = async (req: Request, res: Response) => {
   try {
     const userData = req.body;
@@ -81,7 +82,7 @@ const updateUser = async (req: Request, res: Response) => {
     });
   }
 };
-
+// delete user from controller
 const deleteUser = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -99,7 +100,7 @@ const deleteUser = async (req: Request, res: Response) => {
     });
   }
 };
-
+// add user order from controller
 const addOrderToUser = async (req: Request, res: Response) => {
   const userId = parseInt(req.params.userId);
   const orders = req.body.orders;
@@ -135,7 +136,7 @@ const addOrderToUser = async (req: Request, res: Response) => {
     });
   }
 };
-
+// get user data from controller
 const getUserOrderData = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -145,7 +146,7 @@ const getUserOrderData = async (req: Request, res: Response) => {
       message: 'Order fetched successfully!',
       data: orders,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
     res.status(500).json({
       success: false,
@@ -153,7 +154,7 @@ const getUserOrderData = async (req: Request, res: Response) => {
     });
   }
 };
-
+// calculate order price from controller
 const getCalculateTotaPriceOrders = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
@@ -166,8 +167,12 @@ const getCalculateTotaPriceOrders = async (req: Request, res: Response) => {
       message: 'Total price calculated successfully!',
       data: result,
     });
-  } catch (err) {
+  } catch (err: any) {
     console.log(err);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to fetch orders. Please try again later.',
+    });
   }
 };
 
