@@ -167,7 +167,7 @@ const getCalculateTotaPriceOrders = async (req: Request, res: Response) => {
       message: 'Total price calculated successfully!',
       data: result,
     });
-  } catch (error) {
+  } catch (error: any) {
     if (error instanceof Error) {
       console.log(error);
       res.status(500).json({
